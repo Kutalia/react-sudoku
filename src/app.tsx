@@ -1,8 +1,9 @@
-import ReactDOM from "react-dom";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
 import Sudoku from './components/Sudoku';
 import './styles/styles.css';
 
-const App = () => {
+const App: React.FC = () => {
     return (
         <div className="main">
             <Sudoku />

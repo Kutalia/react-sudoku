@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-    entry: './src/app.js',
+    entry: './src/app.tsx',
     output: {
         path: path.join(__dirname, 'public', 'dist'),
         filename: 'bundle.js'
@@ -10,6 +10,9 @@ module.exports = {
         contentBase: './public',
         publicPath: '/dist/',
         historyApiFallback: true
+    },
+    resolve: {
+        extensions: [".ts", ".tsx", ".js"]
     },
     module: {
         rules: [
@@ -48,7 +51,12 @@ module.exports = {
                     }
                 ]
             },
-        ]
+            {
+                test: /\.tsx?$/,
+                use: 'ts-loader',
+                exclude: /node_modules/,
+            },
+        ],
     },
     devtool: 'inline-source-map'
 }

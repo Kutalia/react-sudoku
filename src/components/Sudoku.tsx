@@ -1,15 +1,12 @@
-import { useEffect, useReducer } from 'react';
+import * as React from "react";
+import { useReducer } from 'react';
 import { defaultState } from '../utils/common';
 import sudokuReducer from '../reducers/sudoku';
 import SelectDifficulty from './SelectDifficulty';
 import SudokuPage from './SudokuPage';
 
-const Sudoku = () => {
+const Sudoku: React.FC = () => {
     const [state, dispatch] = useReducer(sudokuReducer, defaultState);
-
-    useEffect(() => {
-
-    });
 
     return (
         <>
