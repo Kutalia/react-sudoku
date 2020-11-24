@@ -1,14 +1,30 @@
+type SudokuValue = number | null | boolean
+type Sudoku = Array<SudokuValue>;
+
+export interface State {
+    sudoku: Sudoku,
+    prefilledCells: Array<number>,
+    failedCells: Array<number>,
+    modal: boolean
+}
+
+export const enum DifficultyLevels {
+    EASY,
+    MEDIUM,
+    HARD
+}
+
 // zero based index is supplied and returned
-function getRowIndex(index) {
+function getRowIndex(index: number): number {
     return Math.floor(index / 9);
 }
 
-function getColumnIndex(index) {
+function getColumnIndex(index: number): number {
     return index % 9;
 }
 
 // checks if there is same element in the appropriate row of the given element
-function checkRow(index, sudoku) {
+function checkRow(index: number, sudoku: Sudoku): boolean {
     const rowIndex = getRowIndex(index);
     const firstIndexInRow = rowIndex * 9;
     let indexInCurrentLoop;
@@ -24,7 +40,7 @@ function checkRow(index, sudoku) {
     return true;
 }
 
-function checkColumn(index, sudoku) {
+function checkColumn(index: number, sudoku: Sudoku): boolean {
     const columnIndex = getColumnIndex(index);
     const firstIndexInColumn = columnIndex;
     let indexInCurrentLoop;
@@ -40,7 +56,7 @@ function checkColumn(index, sudoku) {
     return true;
 }
 
-function checkSquare(index, sudoku) {
+function checkSquare(index: number, sudoku: Sudoku): boolean {
     const columnIndex = index % 9;
     const squaresRowIndex = Math.floor(index / 27);
     const squaresColumnIndex = Math.floor(columnIndex / 3);
@@ -63,12 +79,12 @@ function checkSquare(index, sudoku) {
     return true;
 }
 
-function addToSudoku(index, num, sudoku) {
+function addToSudoku(index: number, num: number, sudoku: Sudoku): Sudoku {
     sudoku[index] = num;
     return sudoku;
 }
 
-function sudokuToString(sudoku) {
+function sudokuToString(sudoku: Sudoku): string {
     let str = String(sudoku);
     // remove trailing commas
     while (str.indexOf(',,') !== -1) {
@@ -80,7 +96,7 @@ function sudokuToString(sudoku) {
     return str;
 }
 
-function addToBacktracker(sudoku) {
+function addToBacktracker(sudoku: Sudoku): void {
     let sudokuStr = sudokuToString(sudoku);
 
     for (let i = 0; i < backtracker.length; i++) {
@@ -95,7 +111,7 @@ function addToBacktracker(sudoku) {
     backtracker.push(sudokuStr);
 }
 
-function checkInBacktracker(sudoku) {
+function checkInBacktracker(sudoku: Sudoku): boolean {
     let sudokuStr = sudokuToString(sudoku);
 
     for (let i = 0; i < backtracker.length; i++) {
@@ -109,9 +125,9 @@ function checkInBacktracker(sudoku) {
     return true;
 }
 
-let backtracker = [], unsolvableSequence, randNum, sudoku = new Array(81).fill(null), index, possibleValues;
+let backtracker: string[] = [], unsolvableSequence, randNum, sudoku = new Array(81).fill(null), index, possibleValues;
 
-function generateNewSudokuElement() {
+function generateNewSudokuElement(): null | void {
     index = sudoku.indexOf(null), possibleValues = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
     do {
@@ -131,14 +147,14 @@ function generateNewSudokuElement() {
         || !checkInBacktracker(sudoku));
 }
 
-function generateSolvedSudoku() {
+function generateSolvedSudoku(): Sudoku {
     while (sudoku.indexOf(null) !== -1) {
         generateNewSudokuElement();
     }
     return sudoku;
 }
 
-export function getSquareIndices(squareIndex) {
+export function getSquareIndices(squareIndex: number): number[] {
     const squaresRowIndex = Math.floor(squareIndex / 3);
     const squaresColumnIndex = squareIndex % 3;
 
@@ -159,29 +175,23 @@ export function getSquareIndices(squareIndex) {
     return squareIndices;
 }
 
-export const difficultyLevels = {
-    EASY: 'easy',
-    MEDIUM: 'medium',
-    HARD: 'hard',
-};
-
 const prefilledCellsInSquareByDifficulty = {
-    [difficultyLevels.EASY]: [3, 4, 5],
-    [difficultyLevels.MEDIUM]: [3, 4],
-    [difficultyLevels.HARD]: [1, 2, 3]
+    [DifficultyLevels.EASY]: [3, 4, 5],
+    [DifficultyLevels.MEDIUM]: [3, 4],
+    [DifficultyLevels.HARD]: [1, 2, 3]
 };
 
-export const defaultState = {
+export const defaultState: State = {
     sudoku: [],
     prefilledCells: [],
     failedCells: [],
     modal: true
 };
 
-export function generateSudoku(difficulty) {
+export function generateSudoku(difficulty: DifficultyLevels) {
     let sudoku = generateSolvedSudoku();
     const possibleFilledCellsInSquare = prefilledCellsInSquareByDifficulty[difficulty];
-    let i = 0, squareIndices, maxFilledCellsInSquare, filledCellsBySquare = new Array(9), allFilledCells = [];
+    let i = 0, squareIndices, maxFilledCellsInSquare, filledCellsBySquare = new Array(9), allFilledCells: number[] = [];
 
     for (; i < 9; i++) { // since there are 9 squares on the whole table
         filledCellsBySquare[i] = [];
@@ -213,7 +223,7 @@ export function generateSudoku(difficulty) {
     };
 }
 
-export function checkCell(value, index, sudokuState) {
+export function checkCell(value: SudokuValue, index: number, sudokuState: Sudoku) {
     const sudoku = [...sudokuState]; // avoid mutations
     sudoku[index] = value;
     return checkSquare(index, sudoku) && checkRow(index, sudoku) && checkColumn(index, sudoku);

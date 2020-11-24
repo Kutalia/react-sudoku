@@ -1,11 +1,12 @@
-import { useState } from 'react';
-import { difficultyLevels } from '../utils/common';
+import React, { useState } from 'react';
+import { DifficultyLevels } from '../utils/common';
 import { closeModal, generatePuzzle } from '../actions/sudoku';
+import { Action } from '../reducers/sudoku';
 
-const Difficulty = ({ selected, label, setDifficultyIndex }) => {
+const Difficulty = ({ selected, label, setDifficulty }: { selected: boolean; label: string, setDifficulty: () => void; }) => {
     return (<div className="choose-difficulty__options__option">
         <div className="choose-difficulty__options__option__bullet">
-            <div className="choose-difficulty__options__option__bullet__ripple" onClick={setDifficultyIndex}>
+            <div className="choose-difficulty__options__option__bullet__ripple" onClick={setDifficulty}>
                 <div className="choose-difficulty__options__option__bullet__outer-circle">
                     {selected && <div className="choose-difficulty__options__option__bullet__inner-circle" />}
                 </div>
@@ -17,14 +18,14 @@ const Difficulty = ({ selected, label, setDifficultyIndex }) => {
     </div>);
 };
 
-const labeledDifficultyLevels = {
-    [difficultyLevels.EASY]: 'Easy, 3-5 prefilled numbers',
-    [difficultyLevels.MEDIUM]: 'Medium, 3-4 prefilled numbers',
-    [difficultyLevels.HARD]: 'Hard, 1-3 prefilled numbers',
+const DifficultyLevelsLabels = {
+    [DifficultyLevels.EASY]: 'Easy, 3-5 prefilled numbers',
+    [DifficultyLevels.MEDIUM]: 'Medium, 3-4 prefilled numbers',
+    [DifficultyLevels.HARD]: 'Hard, 1-3 prefilled numbers',
 };
 
-const SelectDifficulty = ({ dispatch }) => {
-    const [difficulty, setDifficulty] = useState(difficultyLevels.MEDIUM);
+const SelectDifficulty = ({ dispatch }: { dispatch: React.Dispatch<Action> }) => {
+    const [difficulty, setDifficulty] = useState(DifficultyLevels.MEDIUM);
 
     const handleClose = () => {
         dispatch(closeModal());
@@ -44,9 +45,9 @@ const SelectDifficulty = ({ dispatch }) => {
                 </div>
 
                 <div className="choose-difficulty__options">
-                    {Object.values(difficultyLevels).map((difficultyLevel, index) => (
-                        <Difficulty difficultyLevel={difficultyLevel} key={index} label={labeledDifficultyLevels[difficultyLevel]}
-                            selected={difficultyLevel === difficulty} setDifficultyIndex={() => { setDifficulty(difficultyLevel); }} />
+                    {Object.values(DifficultyLevelsLabels).map((label, index) => (
+                        <Difficulty key={index} label={label}
+                            selected={index === difficulty as number} setDifficulty={() => { setDifficulty(index); }} />
                     ))}
                 </div>
                 <div className="choose-difficulty__submit-btn-wrapper">
