@@ -1,13 +1,19 @@
+import * as React from 'react';
 import { getSquareIndices } from '../utils/common';
-import { openModal, editCell } from '../actions/sudoku';
+import { RootState } from '../store';
+import { openModal, editCell } from '../store/actions';
+import { useDispatch, useSelector } from 'react-redux';
 
-const SudokuSquare = ({ state, dispatch, indices, square }) => {
-    const { prefilledCells, failedCells, sudoku } = state;
+const SudokuSquare = ({ indices, square }: { indices: number[], square: number }) => {
+    const dispatch = useDispatch();
+    const prefilledCells = useSelector((state: RootState) => state.prefilledCells);
+    const failedCells = useSelector((state: RootState) => state.failedCells);
+    const sudoku = useSelector((state: RootState) => state.sudoku);
 
     const cells = indices.map((index) => {
         const isPrefilled = prefilledCells.indexOf(index) !== -1 ? true : false;
         const isFailed = failedCells.indexOf(index) !== -1 ? true : false;
-        const changeHandler = (value, i) => {
+        const changeHandler = (value: string, i: number) => {
             if (value !== '') {
                 if (!/^[1-9]$/.test(value)) {
                     return;
@@ -38,10 +44,11 @@ const SudokuSquare = ({ state, dispatch, indices, square }) => {
     );
 };
 
-const SudokuGame = ({ state, dispatch }) => {
+const SudokuGame = () => {
+    const dispatch = useDispatch();
     const indicesBySquareIndex = (new Array(9)).fill(null).map((value, index) => getSquareIndices(index));
     const sudokuSquares = indicesBySquareIndex.map((indices, square) => (
-        <SudokuSquare key={square} state={state} dispatch={dispatch} indices={indices} square={square} />
+        <SudokuSquare key={square} indices={indices} square={square} />
     ));
     const squareRows = new Array(3).fill(null);
 
@@ -71,9 +78,9 @@ const SudokuGame = ({ state, dispatch }) => {
 };
 
 
-const SudokuPage = ({ state, dispatch }) => {
+const SudokuPage = ({ modal }: { modal: boolean }) => {
     return (
-        <div className={`sudoku-page${state.modal ? ' sudoku-page--blur' : ''}`}>
+        <div className={`sudoku-page${modal ? ' sudoku-page--blur' : ''}`}>
             <div className="sudoku-page__veneer">
                 <div className="sudoku-page__veneer-lanars-logo" />
                 <div className="sudoku-page__veneer-text">
@@ -81,7 +88,7 @@ const SudokuPage = ({ state, dispatch }) => {
             </div>
             </div>
             <div className="sudoku-page__sudoku-game-wrapper">
-                <SudokuGame state={state} dispatch={dispatch} />
+                <SudokuGame />
             </div>
         </div>
     );

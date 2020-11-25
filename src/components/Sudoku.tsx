@@ -1,17 +1,17 @@
 import * as React from "react";
-import { useReducer } from 'react';
-import { defaultState } from '../utils/common';
-import sudokuReducer from '../reducers/sudoku';
+import { useSelector } from "react-redux";
+import { RootState } from '../store';
 import SelectDifficulty from './SelectDifficulty';
 import SudokuPage from './SudokuPage';
 
 const Sudoku: React.FC = () => {
-    const [state, dispatch] = useReducer(sudokuReducer, defaultState);
+    const modal = useSelector((state: RootState) => state.modal);
+    const sudokuLength = useSelector((state: RootState) => state.sudoku.length);
 
     return (
         <>
-            { state.modal && <SelectDifficulty dispatch={dispatch} />}
-            { state.sudoku.length !== 0 && <SudokuPage state={state} dispatch={dispatch} />}
+            { modal && <SelectDifficulty />}
+            { sudokuLength !== 0 && <SudokuPage modal={modal} />}
         </>
     )
 };

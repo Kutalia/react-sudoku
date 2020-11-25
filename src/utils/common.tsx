@@ -1,13 +1,6 @@
 type SudokuValue = number | null | boolean
 type Sudoku = Array<SudokuValue>;
 
-export interface State {
-    sudoku: Sudoku,
-    prefilledCells: Array<number>,
-    failedCells: Array<number>,
-    modal: boolean
-}
-
 export const enum DifficultyLevels {
     EASY,
     MEDIUM,
@@ -181,10 +174,10 @@ const prefilledCellsInSquareByDifficulty = {
     [DifficultyLevels.HARD]: [1, 2, 3]
 };
 
-export const defaultState: State = {
-    sudoku: [],
-    prefilledCells: [],
-    failedCells: [],
+export const defaultState = {
+    sudoku: Array(),
+    prefilledCells: Array(),
+    failedCells: Array(),
     modal: true
 };
 

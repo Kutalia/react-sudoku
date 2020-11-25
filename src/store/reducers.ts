@@ -1,27 +1,21 @@
-import { generateSudoku, checkCell, State, DifficultyLevels } from '../utils/common';
+import { generateSudoku, defaultState, checkCell } from '../utils/common';
+import { NEW_GAME, EDIT_CELL, OPEN_MODAL, CLOSE_MODAL, ActionTypes } from './types';
 
-export interface Action {
-    type: 'NEW_GAME' | 'EDIT_CELL' | 'OPEN_MODAL' | 'CLOSE_MODAL';
-    difficulty?: DifficultyLevels;
-    value?: string; // since it's coming straight from html input field
-    index?: number;
-}
-
-export default (state: State, action: Action): State => {
+export default (state = defaultState, action: ActionTypes) => {
     switch (action.type) {
-        case 'NEW_GAME':
+        case NEW_GAME:
             return {
-                ...generateSudoku(action.difficulty as DifficultyLevels),
+                ...generateSudoku(action.difficulty),
                 failedCells: [],
                 modal: false
             };
-        case 'EDIT_CELL':
+        case EDIT_CELL:
             const { value, index } = action;
             const sudoku = [...state.sudoku];
             const failedCells = [...state.failedCells];
             const { prefilledCells } = state;
 
-            sudoku[index as number] = value === '' ? null : Number.parseInt(value as string);
+            sudoku[index] = value === '' ? null : Number.parseInt(value);
 
             for (let i = 0; i < sudoku.length; i++) {
                 if (prefilledCells.indexOf(i) !== -1) { // avoid checking fixed prefilled cells
@@ -43,12 +37,12 @@ export default (state: State, action: Action): State => {
                 sudoku,
                 failedCells
             };
-        case 'OPEN_MODAL':
+        case OPEN_MODAL:
             return {
                 ...state,
                 modal: true
             };
-        case 'CLOSE_MODAL':
+        case CLOSE_MODAL:
             return {
                 ...state,
                 modal: false

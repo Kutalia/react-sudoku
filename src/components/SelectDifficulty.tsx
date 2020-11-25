@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { DifficultyLevels } from '../utils/common';
-import { closeModal, generatePuzzle } from '../actions/sudoku';
-import { Action } from '../reducers/sudoku';
+import { closeModal, generatePuzzle } from '../store/actions';
+import { useDispatch } from 'react-redux';
 
 const Difficulty = ({ selected, label, setDifficulty }: { selected: boolean; label: string, setDifficulty: () => void; }) => {
     return (<div className="choose-difficulty__options__option">
@@ -24,8 +24,9 @@ const DifficultyLevelsLabels = {
     [DifficultyLevels.HARD]: 'Hard, 1-3 prefilled numbers',
 };
 
-const SelectDifficulty = ({ dispatch }: { dispatch: React.Dispatch<Action> }) => {
+const SelectDifficulty = () => {
     const [difficulty, setDifficulty] = useState(DifficultyLevels.MEDIUM);
+    const dispatch = useDispatch();
 
     const handleClose = () => {
         dispatch(closeModal());
