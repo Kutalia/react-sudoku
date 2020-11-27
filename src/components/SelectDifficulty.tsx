@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { DifficultyLevels } from '../utils/common';
 import { closeModal, generatePuzzle } from '../store/actions';
-import { useDispatch } from 'react-redux';
+import { ActionTypes } from '../store/types';
+import { bindActionCreators, Dispatch } from 'redux';
+import { connect } from 'react-redux';
 
 const Difficulty = ({ selected, label, setDifficulty }: { selected: boolean; label: string, setDifficulty: () => void; }) => {
     return (<div className="choose-difficulty__options__option">
@@ -24,16 +26,26 @@ const DifficultyLevelsLabels = {
     [DifficultyLevels.HARD]: 'Hard, 1-3 prefilled numbers',
 };
 
-const SelectDifficulty = () => {
+const mapDispatchToProps = (dispatch: Dispatch<ActionTypes>) =>
+    bindActionCreators(
+        {
+            closeModal,
+            generatePuzzle
+        },
+        dispatch
+    );
+
+type Props = ReturnType<typeof mapDispatchToProps>;
+
+const SelectDifficulty = ({ closeModal, generatePuzzle }: Props) => {
     const [difficulty, setDifficulty] = useState(DifficultyLevels.MEDIUM);
-    const dispatch = useDispatch();
 
     const handleClose = () => {
-        dispatch(closeModal());
+        closeModal();
     };
 
     const handleSubmit = () => {
-        dispatch(generatePuzzle(difficulty));
+        generatePuzzle(difficulty);
     };
 
     return (
@@ -59,4 +71,4 @@ const SelectDifficulty = () => {
     );
 };
 
-export default SelectDifficulty;
+export default connect(null, mapDispatchToProps)(SelectDifficulty);
